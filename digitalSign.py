@@ -3,21 +3,23 @@ from Crypto.Hash import SHA256
 from Crypto.Signature import pkcs1_15
 import os
 
-# generate key - THIS IS NOW UNCOMMENTED
-# def generate_key():
+#generate key 
+def generate_key():
 
-#     # buat folder utk keys if not exist
-#     os.makedirs("key", exist_ok=True)
+    # buat folder utk keys if not exist
+    os.makedirs("key", exist_ok=True)
 
-#     private_key = RSA.generate(2048)
-#     with open ("key/private_key.key", "wb") as key_file:
-#         key_file.write(private_key.export_key())
+    if not os.path.exists("key/private_key.key"):
+        private_key = RSA.generate(2048)
+        with open ("key/private_key.key", "wb") as key_file:
+            key_file.write(private_key.export_key())
 
-#     # public key kena derived from private key
-#     public_key = private_key.publickey()
-#     with open ("key/public_key.key", "wb") as key_file:
-#         key_file.write(public_key.export_key())
+        # public key kena derived from private key
+        public_key = private_key.publickey()
+        with open ("key/public_key.key", "wb") as key_file:
+            key_file.write(public_key.export_key())
 
+        print("\n New keys generated :)")
 def hash_message(msg):
     hashed_message = SHA256.new(msg.encode())
     return hashed_message
@@ -41,16 +43,19 @@ def verify():
             lines = lines.strip()
             message, signature = map(str.strip, lines.split("|", 1))
             
-
+            print("\n" + "="*50)
+            print(f"\nMessage : {message}")
+            print(f"\nSignature : {signature}")
             msg_second_hash = SHA256.new(message.encode())
-
             signature_bytes = bytes.fromhex(signature.strip())
 
             try:
                 pkcs1_15.new(key).verify(msg_second_hash, signature_bytes)
-                print("The signature is valid, Message has not been tempered with.")
+                print("\nThe signature is valid, Message has not been tempered with.")
             except (ValueError, TypeError):
-                print(f"This is not the original messages, your message has been tempered and changed into \"{message}\" sir !!!")
+                print(f"\nThis is not the original messages, your message has been tempered and changed into \"{message}\" sir !!!")
+            print("="*50)
+    
     
     
 
